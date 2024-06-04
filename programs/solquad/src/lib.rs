@@ -87,6 +87,10 @@ pub mod solquad {
 
             if votes != 0 {
                 distributable_amt = (votes / pool_account.total_votes) * escrow_account.creator_deposit_amount as u64;
+                .and_then(|amt| amt.checked_div(pool_account.total_votes)) {
+                    Some(amt) => amt,
+                    None => return Err(ProgramError::Overflow.into()),
+                };
             } else {
                 distributable_amt = 0;
             }
